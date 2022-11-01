@@ -1,11 +1,12 @@
 ﻿using EntityFramework_Playground.Infrastructure;
+using System.Collections.ObjectModel;
 
 namespace EntityFramework_Playground.Model;
 
 public class Zoo
 {
-	public IList<Cage> Cages { get; private set; } = new List<Cage>();
-	public IList<Animal> Animals
+	public IReadOnlyCollection<Cage> Cages { get; private set; } = new List<Cage>();
+	public IReadOnlyCollection<Animal> Animals
 	{
 		get
 		{
@@ -13,7 +14,7 @@ public class Zoo
 			foreach (var cage in Cages)
 				result.AddRange(cage.Residents);
 
-			return result;
+			return new ReadOnlyCollection<Animal>(result);
 		}
 	}
 
@@ -68,7 +69,7 @@ public class Zoo
 
 	public Zoo(IList<Cage> cages, string name, int minAmountOfAnimalsToOpen)
 	{
-		Cages = cages;
+		Cages = new ReadOnlyCollection<Cage>(cages);
 		Name = name;
 		MinAmountOfAnimalsToOpen = minAmountOfAnimalsToOpen;
 		Status = ZooStatus.Closed;
@@ -76,7 +77,7 @@ public class Zoo
 
 	private Zoo(IList<Cage> cages, string name, Guid id)
 	{
-		Cages = cages;
+		Cages = new ReadOnlyCollection<Cage>(cages);
 		Name = name;
 		Id = id;
 	}
